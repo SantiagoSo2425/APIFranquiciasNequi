@@ -783,52 +783,72 @@ Este proyecto incluye **TODOS** los puntos extra solicitados:
 - Operaciones atómicas
 
 ### ✅ 6. Infraestructura como Código (IaC)
-- **Terraform** completo para MongoDB Atlas + AWS
+- **Terraform** completo para MongoDB Atlas + Azure
 - Provisión automática de:
-  - MongoDB Atlas Cluster (M0 Free Tier)
-  - AWS Secrets Manager para credenciales
+  - MongoDB Atlas Cluster (M0 Free Tier) en región de Azure
+  - Azure Key Vault para credenciales
+  - Azure Container Registry para imágenes Docker
   - Database users y permisos
   - IP Whitelisting
 - Código reutilizable y versionado
 
 ### ✅ 7. Despliegue en la Nube
-- **AWS ECS Fargate** para contenedores serverless
-- **Amazon ECR** para registro de imágenes Docker
-- **Application Load Balancer** para distribución de tráfico
-- **CloudWatch** para logs y métricas
-- **MongoDB Atlas** en la nube
-- Scripts de despliegue automatizado
-- Guía completa de deployment
+- **Azure Container Apps** para contenedores serverless
+- **Azure Container Registry (ACR)** para registro de imágenes Docker
+- **Auto-scaling** (1-5 réplicas según demanda)
+- **HTTPS automático** con certificados gestionados
+- **Azure Monitor + Log Analytics** para logs y métricas
+- **MongoDB Atlas** en la nube (región Azure)
+- Scripts de despliegue automatizado (3 opciones)
+- Guías completas: rápida y detallada
 
 ### 📁 Estructura de Archivos para Despliegue
 
-```
-API - Franquicias/
-├── terraform/                    # Infraestructura como Código
-│   ├── main.tf                  # Terraform principal
-│   ├── terraform.tfvars.example # Ejemplo de variables
+├── terraform/                          # Infraestructura como Código
+│   ├── main.tf                        # Terraform para Azure + MongoDB Atlas
+│   ├── terraform-azure.tfvars.example # Ejemplo de variables
+│   ├── .gitignore                     # Ignorar secrets
+│   └── README.md                      # Guía de Terraform
 │   ├── .gitignore              # Ignorar secrets
 │   └── README.md               # Guía de Terraform
-│
-├── deployment/
-│   ├── Dockerfile              # Multi-stage build optimizado
+│   ├── Dockerfile                     # Multi-stage build optimizado
+│   ├── deploy-azure.sh               # Build & push a Azure ACR
+│   ├── deploy-azure-aci.sh           # Azure Container Instances
+│   └── deploy-azure-container-apps.sh # Azure Container Apps (Recomendado)
 │   ├── deploy-aws.sh          # Script de despliegue AWS
-│   └── AWS-DEPLOYMENT.md      # Guía completa de AWS
-│
-├── docker-compose.yml          # Para desarrollo local
+├── AZURE-DEPLOYMENT.md                # Guía completa de despliegue en Azure
+├── QUICKSTART-AZURE.md               # Guía rápida (30-40 min)
+└── docker-compose.yml                # Para desarrollo local
+### 🚀 Despliegue Completo en Azure (Lo que Hicimos)
+
+El proyecto está completamente desplegado en **Microsoft Azure** con la siguiente infraestructura:
 └── docker-compose.aws.yml     # Para producción AWS
+**Recursos Creados:**
+- ✅ **MongoDB Atlas M0** (GRATIS) en región Azure
+- ✅ **Azure Container Registry**: `acrfranquiciasnequidev.azurecr.io`
+- ✅ **Azure Key Vault**: Almacena credenciales de MongoDB
+- ✅ **Azure Container Apps**: App corriendo con auto-scaling (1-5 réplicas)
+- ✅ **HTTPS**: Automático con dominio `*.azurecontainerapps.io`
+- ✅ **Costo**: ~$20-30/mes
+
+**Comando de Despliegue (Resumen):**
 ```
-
+# 1. Provisionar infraestructura con Terraform
 ### 🚀 Despliegue Rápido en AWS
-
-```bash
+terraform apply -var-file="terraform-azure.tfvars"
 # 1. Provisionar MongoDB Atlas con Terraform
-cd terraform
-terraform init
-terraform apply
+# 2. Compilar y subir a Azure Container Registry
+gradle clean build -x test
+az acr login --name acrfranquiciasnequidev
+docker build -t acrfranquiciasnequidev.azurecr.io/franquicias-api:latest .
+docker push acrfranquiciasnequidev.azurecr.io/franquicias-api:latest
 
-# 2. Desplegar en AWS ECS
-cd ../deployment
+# 3. Desplegar en Azure Container Apps
+az containerapp env create --name franquicias-nequi-env --resource-group rg-franquicias-nequi-dev --location eastus
+az containerapp create --name franquicias-nequi-api ...
+
+# 4. Verificar deployment
+curl https://franquicias-nequi-api.blueplant-b4ada0ac.eastus.azurecontainerapps.io/actuator/health
 ./deploy-aws.sh
 
 # 3. Verificar deployment
