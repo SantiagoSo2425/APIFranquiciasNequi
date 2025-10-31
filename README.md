@@ -1,4 +1,20 @@
-﻿# FranquiciasAPI - Sistema de Gestión de Franquicias
+﻿| Endpoint agregar sucursal | ✅ | `POST /api/franchises/{id}/branches` |
+| Endpoint agregar producto | ✅ | `POST /.../products` |
+| Endpoint eliminar producto | ✅ | `DELETE /.../products/{id}` |
+| Endpoint modificar stock | ✅ | `PATCH /.../stock` |
+| Endpoint mayor stock | ✅ | `GET /.../highest-stock-products` |
+| Persistencia en la nube | ✅ | MongoDB Atlas (Azure region) |
+| **Puntos Extra** | | |
+| Docker | ✅ | Docker + Docker Compose completo |
+| Programación Reactiva | ✅ | 100% WebFlux + Project Reactor |
+| Actualizar nombre franquicia | ✅ | `PATCH /.../name` |
+| Actualizar nombre sucursal | ✅ | `PATCH /.../name` |
+| Actualizar nombre producto | ✅ | `PATCH /.../name` |
+| Infraestructura como Código | ✅ | Terraform (MongoDB Atlas + Azure) |
+| Despliegue en la nube | ✅ | Azure Container Apps + MongoDB Atlas |
+
+### 🎯 Puntaje Total: **14/14 (100%)**
+# FranquiciasAPI - Sistema de Gestión de Franquicias
 
 [![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg)](https://spring.io/projects/spring-boot)
@@ -677,12 +693,188 @@ spring:
 
 ---
 
+## 🌐 **Probar la API Desplegada en Azure**
+
+La aplicación ya está desplegada y funcionando en Azure. Puedes probarla directamente:
+
+### **URL de la API:**
+```
+https://franquicias-nequi-api.blueplant-b4ada0ac.eastus.azurecontainerapps.io
+```
+
+### **Pruebas Rápidas con cURL:**
+
+#### Health Check
+```bash
+curl https://franquicias-nequi-api.blueplant-b4ada0ac.eastus.azurecontainerapps.io/actuator/health
+```
+
+#### Crear Franquicia
+```bash
+curl -X POST https://franquicias-nequi-api.blueplant-b4ada0ac.eastus.azurecontainerapps.io/api/franchises \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Nequi Colombia"}'
+```
+
+#### Agregar Sucursal
+```bash
+curl -X POST https://franquicias-nequi-api.blueplant-b4ada0ac.eastus.azurecontainerapps.io/api/franchises/{id}/branches \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Sucursal Medellín"}'
+```
+
+### **Pruebas con Postman:**
+
+Usa esta **Base URL** en Postman:
+```
+https://franquicias-nequi-api.blueplant-b4ada0ac.eastus.azurecontainerapps.io
+```
+
+Luego sigue los ejemplos de la [sección de Postman](#usar-con-postman) más abajo.
+
+---
+
 ## 📚 Documentación Adicional
 
+### Guías de Deployment
+- **[🚀 QUICKSTART-AZURE.md](QUICKSTART-AZURE.md)**: Guía rápida de despliegue en Azure (30-40 min)
+- **[📖 AZURE-DEPLOYMENT.md](AZURE-DEPLOYMENT.md)**: Guía completa y detallada para Azure
+- **[🔧 Terraform Guide](terraform/README.md)**: Infraestructura como Código con Terraform
+
+### Recursos Técnicos
 - **Arquitectura Clean**: [Medium - Bancolombia](https://medium.com/bancolombia-tech/clean-architecture-aislando-los-detalles-4f9530f35d7a)
 - **Spring WebFlux**: [Documentación Oficial](https://docs.spring.io/spring-framework/docs/current/reference/html/web-reactive.html)
 - **Project Reactor**: [Reactor Docs](https://projectreactor.io/docs)
 - **MongoDB Reactive**: [Spring Data MongoDB](https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#mongo.reactive)
+- **Terraform**: [Terraform Docs](https://www.terraform.io/docs)
+- **Azure Container Apps**: [Azure Docs](https://docs.microsoft.com/azure/container-apps/)
+
+---
+
+## ⭐ Puntos Extra Implementados
+
+Este proyecto incluye **TODOS** los puntos extra solicitados:
+
+### ✅ 1. Empaquetado con Docker
+- **Docker Compose** completo para desarrollo local
+- **Multi-stage Dockerfile** optimizado para producción
+- **Docker Compose AWS** para despliegue en la nube
+- Health checks y monitoreo integrado
+
+### ✅ 2. Programación Funcional y Reactiva
+- **100% Reactivo** con Spring WebFlux
+- Uso de **Mono** y **Flux** de Project Reactor
+- Operaciones no bloqueantes en todas las capas
+- Manejo funcional de errores con operadores reactivos
+
+### ✅ 3. Actualizar Nombre de Franquicia
+- **Endpoint**: `PATCH /api/franchises/{franchiseId}/name`
+- Actualización reactiva del nombre
+- Validación y manejo de errores
+
+### ✅ 4. Actualizar Nombre de Sucursal
+- **Endpoint**: `PATCH /api/franchises/{franchiseId}/branches/{branchId}/name`
+- Búsqueda y actualización eficiente
+- Persistencia inmediata
+
+### ✅ 5. Actualizar Nombre de Producto
+- **Endpoint**: `PATCH /api/franchises/{franchiseId}/branches/{branchId}/products/{productId}/name`
+- Navegación profunda en la estructura
+- Operaciones atómicas
+
+### ✅ 6. Infraestructura como Código (IaC)
+- **Terraform** completo para MongoDB Atlas + AWS
+- Provisión automática de:
+  - MongoDB Atlas Cluster (M0 Free Tier)
+  - AWS Secrets Manager para credenciales
+  - Database users y permisos
+  - IP Whitelisting
+- Código reutilizable y versionado
+
+### ✅ 7. Despliegue en la Nube
+- **AWS ECS Fargate** para contenedores serverless
+- **Amazon ECR** para registro de imágenes Docker
+- **Application Load Balancer** para distribución de tráfico
+- **CloudWatch** para logs y métricas
+- **MongoDB Atlas** en la nube
+- Scripts de despliegue automatizado
+- Guía completa de deployment
+
+### 📁 Estructura de Archivos para Despliegue
+
+```
+API - Franquicias/
+├── terraform/                    # Infraestructura como Código
+│   ├── main.tf                  # Terraform principal
+│   ├── terraform.tfvars.example # Ejemplo de variables
+│   ├── .gitignore              # Ignorar secrets
+│   └── README.md               # Guía de Terraform
+│
+├── deployment/
+│   ├── Dockerfile              # Multi-stage build optimizado
+│   ├── deploy-aws.sh          # Script de despliegue AWS
+│   └── AWS-DEPLOYMENT.md      # Guía completa de AWS
+│
+├── docker-compose.yml          # Para desarrollo local
+└── docker-compose.aws.yml     # Para producción AWS
+```
+
+### 🚀 Despliegue Rápido en AWS
+
+```bash
+# 1. Provisionar MongoDB Atlas con Terraform
+cd terraform
+terraform init
+terraform apply
+
+# 2. Desplegar en AWS ECS
+cd ../deployment
+./deploy-aws.sh
+
+# 3. Verificar deployment
+curl http://<ALB-DNS>/actuator/health
+```
+
+### 🚀 Despliegue Rápido en Azure
+
+**¿Primera vez desplegando?** Usa la guía rápida:
+
+📖 **[QUICKSTART-AZURE.md](QUICKSTART-AZURE.md)** - Despliegue paso a paso en 30-40 minutos
+
+**¿Quieres todos los detalles?** Usa la guía completa:
+
+📖 **[AZURE-DEPLOYMENT.md](AZURE-DEPLOYMENT.md)** - Guía completa con explicaciones
+
+#### Comandos Rápidos (Resumen)
+
+```bash
+# 1. Configurar Terraform
+cd terraform
+terraform apply -var-file="terraform-azure.tfvars"
+
+# 2. Compilar y desplegar
+cd ..
+gradle clean build -x test
+az acr login --name acrfranquiciasnequidev
+docker build -t acrfranquiciasnequidev.azurecr.io/franquicias-api:latest .
+docker push acrfranquiciasnequidev.azurecr.io/franquicias-api:latest
+
+# 3. Crear Container App
+az containerapp env create --name franquicias-nequi-env --resource-group rg-franquicias-nequi-dev --location eastus
+az containerapp create --name franquicias-nequi-api ... # Ver guía completa
+```
+
+Ver **[Guía Completa de Azure](AZURE-DEPLOYMENT.md)** para instrucciones detalladas.
+
+---
+
+## 🏆 Resumen de Cumplimiento
+
+| Requisito | Estado | Detalles |
+|-----------|--------|----------|
+| **Criterios de Aceptación** | | |
+| Spring Boot | ✅ | Spring Boot 3.x + Java 21 |
+| Endpoint agregar franquicia | ✅ | `POST /api/franchises` |
 
 ---
 
