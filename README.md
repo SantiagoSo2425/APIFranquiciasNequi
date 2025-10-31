@@ -308,7 +308,123 @@ curl http://localhost:8080/api/franchises/abc123/highest-stock-products
 
 ### Usar con Postman
 
-Importa la colección incluida: `FranquiciasAPI.postman_collection.json`
+#### 1. Crear Franquicia
+- **Método**: `POST`
+- **URL**: `http://localhost:8080/api/franchises`
+- **Headers**: `Content-Type: application/json`
+- **Body (raw - JSON)**:
+```json
+{
+  "name": "Nequi"
+}
+```
+- **Respuesta**:
+```json
+{
+  "id": "673c5a8f9e1d2a3b4c5d6e7f",
+  "name": "Nequi",
+  "branches": []
+}
+```
+
+#### 2. Agregar Sucursal
+- **Método**: `POST`
+- **URL**: `http://localhost:8080/api/franchises/673c5a8f9e1d2a3b4c5d6e7f/branches`
+- **Headers**: `Content-Type: application/json`
+- **Body (raw - JSON)**:
+```json
+{
+  "name": "Sucursal Bogotá Centro"
+}
+```
+- **Respuesta**:
+```json
+{
+  "id": "673c5a8f9e1d2a3b4c5d6e7f",
+  "name": "Nequi",
+  "branches": [
+    {
+      "id": "673c5b1a2f3e4d5c6a7b8c9d",
+      "name": "Sucursal Bogotá Centro",
+      "products": []
+    }
+  ]
+}
+```
+
+#### 3. Agregar Producto
+- **Método**: `POST`
+- **URL**: `http://localhost:8080/api/franchises/673c5a8f9e1d2a3b4c5d6e7f/branches/673c5b1a2f3e4d5c6a7b8c9d/products`
+- **Headers**: `Content-Type: application/json`
+- **Body (raw - JSON)**:
+```json
+{
+  "name": "Smartphone Samsung",
+  "stock": 50
+}
+```
+- **Respuesta**:
+```json
+{
+  "id": "673c5a8f9e1d2a3b4c5d6e7f",
+  "name": "Nequi",
+  "branches": [
+    {
+      "id": "673c5b1a2f3e4d5c6a7b8c9d",
+      "name": "Sucursal Bogotá Centro",
+      "products": [
+        {
+          "id": "673c5c2d3e4f5a6b7c8d9e0f",
+          "name": "Smartphone Samsung",
+          "stock": 50
+        }
+      ]
+    }
+  ]
+}
+```
+
+#### 4. Actualizar Stock
+- **Método**: `PATCH`
+- **URL**: `http://localhost:8080/api/franchises/673c5a8f9e1d2a3b4c5d6e7f/branches/673c5b1a2f3e4d5c6a7b8c9d/products/673c5c2d3e4f5a6b7c8d9e0f/stock`
+- **Headers**: `Content-Type: application/json`
+- **Body (raw - JSON)**:
+```json
+{
+  "stock": 75
+}
+```
+
+#### 5. Eliminar Producto
+- **Método**: `DELETE`
+- **URL**: `http://localhost:8080/api/franchises/673c5a8f9e1d2a3b4c5d6e7f/branches/673c5b1a2f3e4d5c6a7b8c9d/products/673c5c2d3e4f5a6b7c8d9e0f`
+- **Headers**: No requiere
+
+#### 6. Obtener Productos con Mayor Stock
+- **Método**: `GET`
+- **URL**: `http://localhost:8080/api/franchises/673c5a8f9e1d2a3b4c5d6e7f/highest-stock-products`
+- **Headers**: No requiere
+- **Respuesta**:
+```json
+[
+  {
+    "productId": "673c5c2d3e4f5a6b7c8d9e0f",
+    "productName": "Smartphone Samsung",
+    "stock": 75,
+    "branchId": "673c5b1a2f3e4d5c6a7b8c9d",
+    "branchName": "Sucursal Bogotá Centro"
+  },
+  {
+    "productId": "673c5d3e4f5a6b7c8d9e0f1a",
+    "productName": "Laptop HP",
+    "stock": 120,
+    "branchId": "673c5e4f5a6b7c8d9e0f1a2b",
+    "branchName": "Sucursal Medellín"
+  }
+]
+```
+
+> **Tip**: Copia y guarda los IDs que recibes en las respuestas para usarlos en las siguientes peticiones
 
 ---
 
@@ -563,10 +679,10 @@ spring:
 
 ## 📚 Documentación Adicional
 
-- **Colección Postman**: `FranquiciasAPI.postman_collection.json`
 - **Arquitectura Clean**: [Medium - Bancolombia](https://medium.com/bancolombia-tech/clean-architecture-aislando-los-detalles-4f9530f35d7a)
 - **Spring WebFlux**: [Documentación Oficial](https://docs.spring.io/spring-framework/docs/current/reference/html/web-reactive.html)
 - **Project Reactor**: [Reactor Docs](https://projectreactor.io/docs)
+- **MongoDB Reactive**: [Spring Data MongoDB](https://docs.spring.io/spring-data/mongodb/docs/current/reference/html/#mongo.reactive)
 
 ---
 
