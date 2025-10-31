@@ -1,0 +1,35 @@
+﻿server:
+  port: 8080
+
+spring:
+  application:
+    name: "FranquiciasAPI"
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://mongodb:27017/franquicias}
+      database: ${SPRING_DATA_MONGODB_DATABASE:franquicias}
+      auto-index-creation: true
+
+logging:
+  level:
+    root: INFO
+    co.com.nequi: DEBUG
+    org.springframework.data.mongodb: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "health,prometheus,info,metrics"
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: always
+  health:
+    mongo:
+      enabled: true
+
+cors:
+  allowed-origins: "*"
+

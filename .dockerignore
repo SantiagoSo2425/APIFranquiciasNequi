@@ -1,0 +1,40 @@
+﻿# Build artifacts
+build/
+.gradle/
+bin/
+out/
+target/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Docker
+.dockerignore
+docker-compose*.yml
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+*.md
+!README.md
+
+# Tests
+**/test/
+
+# Cache
+build-cache/
+.cache/
+

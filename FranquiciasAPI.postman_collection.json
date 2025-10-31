@@ -1,0 +1,213 @@
+﻿{
+  "info": {
+    "name": "FranquiciasAPI - Nequi",
+    "_postman_id": "franquicias-api-collection",
+    "description": "Colección de endpoints para la API de Franquicias de Nequi",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "franchiseId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "branchId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "productId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Crear Franquicia",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Nequi\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/franchises",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "franchises"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "2. Agregar Sucursal a Franquicia",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Sucursal Bogotá\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/franchises/{{franchiseId}}/branches",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "franchises", "{{franchiseId}}", "branches"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "3. Agregar Producto a Sucursal",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Producto A\",\n  \"stock\": 500\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/franchises/{{franchiseId}}/branches/{{branchId}}/products",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "franchises", "{{franchiseId}}", "branches", "{{branchId}}", "products"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "4. Eliminar Producto de Sucursal",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/franchises/{{franchiseId}}/branches/{{branchId}}/products/{{productId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "franchises", "{{franchiseId}}", "branches", "{{branchId}}", "products", "{{productId}}"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "5. Actualizar Stock de Producto",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"stock\": 600\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/franchises/{{franchiseId}}/branches/{{branchId}}/products/{{productId}}/stock",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "franchises", "{{franchiseId}}", "branches", "{{branchId}}", "products", "{{productId}}", "stock"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "6. Obtener Productos con Mayor Stock",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/franchises/{{franchiseId}}/highest-stock-products",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "franchises", "{{franchiseId}}", "highest-stock-products"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "7. Actualizar Nombre de Franquicia",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Nuevo Nombre Franquicia\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/franchises/{{franchiseId}}/name",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "franchises", "{{franchiseId}}", "name"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "8. Actualizar Nombre de Sucursal",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Nuevo Nombre Sucursal\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/franchises/{{franchiseId}}/branches/{{branchId}}/name",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "franchises", "{{franchiseId}}", "branches", "{{branchId}}", "name"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "9. Actualizar Nombre de Producto",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Nuevo Nombre Producto\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/franchises/{{franchiseId}}/branches/{{branchId}}/products/{{productId}}/name",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "franchises", "{{franchiseId}}", "branches", "{{branchId}}", "products", "{{productId}}", "name"]
+        }
+      },
+      "response": []
+    }
+  ]
+}
+

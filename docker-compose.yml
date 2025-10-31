@@ -1,0 +1,78 @@
+﻿services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: franquicias-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=franquicias
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - franquicias-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # Mongo Express - MongoDB UI
+  mongo-express:
+    image: mongo-express:latest
+    container_name: franquicias-mongo-express
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_URL=mongodb://mongodb:27017/
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin123
+      - ME_CONFIG_MONGODB_ENABLE_ADMIN=true
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - franquicias-network
+
+  # FranquiciasAPI - Spring Boot Application
+  franquicias-api:
+    build:
+      context: .
+      dockerfile: deployment/Dockerfile
+    container_name: franquicias-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/franquicias
+      - SPRING_DATA_MONGODB_DATABASE=franquicias
+      - SERVER_PORT=8080
+      - LOGGING_LEVEL_ROOT=INFO
+      - LOGGING_LEVEL_CO_COM_NEQUI=DEBUG
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - franquicias-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+volumes:
+  mongodb_data:
+    driver: local
+  mongodb_config:
+    driver: local
+
+networks:
+  franquicias-network:
+    driver: bridge
+

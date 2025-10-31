@@ -1,0 +1,596 @@
+﻿# FranquiciasAPI - Sistema de Gestión de Franquicias
+
+[![Java](https://img.shields.io/badge/Java-21-orange.svg)](https://openjdk.org/)
+[![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-brightgreen.svg)](https://spring.io/projects/spring-boot)
+[![WebFlux](https://img.shields.io/badge/WebFlux-Reactive-blue.svg)](https://docs.spring.io/spring-framework/docs/current/reference/html/web-reactive.html)
+[![MongoDB](https://img.shields.io/badge/MongoDB-7.0-green.svg)](https://www.mongodb.com/)
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue.svg)](https://www.docker.com/)
+
+API REST reactiva para la gestión integral de franquicias, sucursales y productos, desarrollada con **Spring Boot WebFlux** siguiendo los principios de **Clean Architecture** utilizando el **Scaffold de Bancolombia**.
+
+---
+
+## 🎯 Sobre este Proyecto
+
+Este proyecto fue desarrollado como parte de mi proceso de aplicación a **Nequi**, una de las empresas fintech más innovadoras de Colombia. Nequi representa la transformación digital del sector financiero en Latinoamérica, democratizando el acceso a servicios bancarios a través de tecnología de punta y una experiencia de usuario excepcional.
+
+### ¿Por qué quiero trabajar en Nequi?
+
+Como desarrollador backend apasionado por la arquitectura de software y las tecnologías reactivas, Nequi representa el lugar ideal para crecer profesionalmente por varias razones:
+
+1. **Impacto Social**: Nequi está cambiando la vida de millones de colombianos, facilitando la inclusión financiera y democratizando el acceso a servicios bancarios. Ser parte de este impacto social es profundamente motivador.
+
+2. **Excelencia Técnica**: Nequi es reconocido por su stack tecnológico de vanguardia y sus prácticas de ingeniería de software de clase mundial. Trabajar en un ambiente donde se valora la calidad del código, la arquitectura limpia y las mejores prácticas es fundamental para mi desarrollo profesional.
+
+3. **Cultura de Innovación**: La capacidad de Nequi para innovar constantemente, experimentar con nuevas tecnologías y mantenerse a la vanguardia en el sector fintech es inspiradora. Quiero ser parte de un equipo que no teme desafiar el status quo.
+
+4. **Escalabilidad y Complejidad**: Los desafíos técnicos que Nequi enfrenta diariamente (millones de transacciones, alta disponibilidad, escalabilidad masiva) son exactamente el tipo de problemas complejos que me apasionan resolver.
+
+5. **Aprendizaje Continuo**: El equipo de Nequi, conformado por profesionales de alto nivel, representa una oportunidad invaluable para aprender, crecer y evolucionar como ingeniero de software.
+
+Este proyecto demuestra mi compromiso con la excelencia técnica, mi capacidad para implementar arquitecturas limpias y escalables, y mi dominio de tecnologías reactivas modernas, competencias que estoy ansioso por aplicar en Nequi.
+
+---
+
+## 🏗️ Arquitectura
+
+Este proyecto implementa **Clean Architecture** (Arquitectura Limpia) propuesta por Robert C. Martin, utilizando el **Scaffold generado por Bancolombia**, garantizando:
+
+- ✅ Separación clara de responsabilidades
+- ✅ Independencia de frameworks
+- ✅ Testabilidad
+- ✅ Independencia de la UI y la base de datos
+- ✅ Regla de dependencia (las dependencias apuntan hacia adentro)
+
+![Clean Architecture](https://miro.medium.com/max/1400/1*ZdlHz8B0-qu9Y-QO3AXR_w.png)
+
+### Capas de la Aplicación
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    Applications                         │
+│              (MainApplication + Config)                 │
+└────────────────────┬────────────────────────────────────┘
+                     │
+┌────────────────────┴────────────────────────────────────┐
+│                  Infrastructure                         │
+│  ┌──────────────────────┐  ┌──────────────────────┐    │
+│  │   Entry Points       │  │   Driven Adapters    │    │
+│  │   - reactive-web     │  │   - mongo-repository │    │
+│  │   (API REST)         │  │   (Persistencia)     │    │
+│  └──────────────────────┘  └──────────────────────┘    │
+└────────────────────┬────────────────────────────────────┘
+                     │
+┌────────────────────┴────────────────────────────────────┐
+│                      Domain                             │
+│  ┌──────────────────────┐  ┌──────────────────────┐    │
+│  │      UseCases        │  │       Model          │    │
+│  │  (Lógica Negocio)    │  │  (Entidades + Ports) │    │
+│  └──────────────────────┘  └──────────────────────┘    │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Descripción de Capas
+
+#### **Domain (Núcleo del Negocio)**
+
+**Model**: Contiene las entidades de dominio y los puertos (interfaces)
+- `Franchise`, `Branch`, `Product` (Entidades)
+- `FranchiseRepository`, `BranchRepository`, `ProductRepository` (Puertos)
+
+**UseCase**: Implementa la lógica de negocio pura
+- 9 casos de uso implementados con programación reactiva (Mono/Flux)
+- Orquesta el flujo de datos entre entry points y repositories
+
+#### **Infrastructure (Detalles de Implementación)**
+
+**Entry Points**: Puntos de entrada a la aplicación
+- `reactive-web`: API REST con Spring WebFlux (Handlers + Routers)
+- DTOs para entrada/salida de datos
+
+**Driven Adapters**: Implementaciones de servicios externos
+- `mongo-repository`: Implementación reactiva con Spring Data MongoDB
+- Mapeo entre entidades de dominio y modelos de datos
+
+#### **Applications**
+
+Módulo de configuración y arranque
+- `MainApplication`: Punto de entrada de la aplicación
+- `UseCasesConfig`: Auto-configuración de beans de casos de uso
+
+---
+
+## 🚀 Tecnologías Utilizadas
+
+| Tecnología | Versión | Propósito |
+|------------|---------|-----------|
+| **Java** | 21 LTS | Lenguaje de programación |
+| **Spring Boot** | 3.x | Framework base |
+| **Spring WebFlux** | 3.x | Programación reactiva no bloqueante |
+| **Project Reactor** | - | Librería reactiva (Mono/Flux) |
+- **Java 21** instalado (para compilar el proyecto)
+| **Spring Data MongoDB Reactive** | 3.x | Persistencia reactiva en MongoDB |
+| **MongoDB** | 7.0 | Base de datos NoSQL |
+| **Lombok** | - | Reducción de boilerplate |
+| **Gradle** | 8.x | Build tool |
+### Ejecutar en Dos Simples Pasos
+| **Bancolombia Scaffold** | - | Generación de estructura Clean Architecture |
+**Paso 1: Compilar el proyecto**
+```bash
+# En Windows
+.\gradle clean build -x test
+
+# En Linux/Mac
+./gradle clean build -x test
+```
+
+**Paso 2: Iniciar con Docker**
+
+---
+
+## 📋 Funcionalidades Implementadas
+Docker Compose se encargará de:
+1. ✅ Construir la imagen de la aplicación con el JAR compilado
+2. ✅ Iniciar MongoDB con persistencia de datos
+3. ✅ Iniciar Mongo Express (interfaz web para MongoDB)
+4. ✅ Iniciar la API de Franquicias con health checks
+| `POST` | `/api/franchises/{id}/branches` | Agregar sucursal a franquicia |
+| `POST` | `/api/franchises/{id}/branches/{id}/products` | Agregar producto a sucursal |
+| `DELETE` | `/api/franchises/{id}/branches/{id}/products/{id}` | Eliminar producto |
+| `PATCH` | `/api/franchises/{id}/branches/{id}/products/{id}/stock` | Actualizar stock |
+| `GET` | `/api/franchises/{id}/highest-stock-products` | Obtener productos con mayor stock por sucursal |
+| `PATCH` | `/api/franchises/{id}/name` | Actualizar nombre de franquicia |
+| `PATCH` | `/api/franchises/{id}/branches/{id}/name` | Actualizar nombre de sucursal |
+| `PATCH` | `/api/franchises/{id}/branches/{id}/products/{id}/name` | Actualizar nombre de producto |
+
+### Casos de Uso Implementados
+
+1. ✅ **CreateFranchiseUseCase**: Crear nuevas franquicias
+2. ✅ **AddBranchToFranchiseUseCase**: Agregar sucursales
+3. ✅ **AddProductToBranchUseCase**: Agregar productos
+4. ✅ **RemoveProductFromBranchUseCase**: Eliminar productos
+5. ✅ **UpdateProductStockUseCase**: Gestionar inventario
+6. ✅ **GetHighestStockProductsUseCase**: Consulta de productos con mayor stock
+7. ✅ **UpdateFranchiseNameUseCase**: Actualizar franquicias
+8. ✅ **UpdateBranchNameUseCase**: Actualizar sucursales
+9. ✅ **UpdateProductNameUseCase**: Actualizar productos
+
+---
+
+## 🐳 Inicio Rápido con Docker
+
+### Prerrequisitos
+
+- **Docker Desktop** instalado y ejecutándose
+- **Puerto 8080** disponible (API)
+- **Puerto 27017** disponible (MongoDB)
+- **Puerto 8081** disponible (Mongo Express UI)
+
+### Ejecutar Todo con Un Solo Comando
+
+```bash
+docker-compose up -d
+```
+
+Eso es todo. Docker Compose se encargará de:
+1. ✅ Descargar las imágenes necesarias (primera vez)
+2. ✅ Construir la imagen de la aplicación
+3. ✅ Iniciar MongoDB con persistencia de datos
+4. ✅ Iniciar Mongo Express (interfaz web para MongoDB)
+5. ✅ Iniciar la API de Franquicias con health checks
+
+### Verificar que Todo Funciona
+
+```bash
+# Ver estado de los contenedores
+docker-compose ps
+
+# Ver logs de la API
+docker-compose logs -f franquicias-api
+
+# Verificar health de la aplicación
+curl http://localhost:8080/actuator/health
+```
+
+### Acceder a los Servicios
+
+| Servicio | URL | Credenciales |
+|----------|-----|--------------|
+| **API REST** | http://localhost:8080 | - |
+| **Health Check** | http://localhost:8080/actuator/health | - |
+| **Prometheus Metrics** | http://localhost:8080/actuator/prometheus | - |
+| **Mongo Express (UI)** | http://localhost:8081 | `admin` / `admin123` |
+
+### Detener los Servicios
+
+```bash
+# Detener contenedores (mantiene los datos)
+docker-compose down
+
+# Detener y eliminar todo (incluyendo volúmenes de datos)
+docker-compose down -v
+```
+
+---
+
+## 💻 Desarrollo Local (Sin Docker)
+
+Si prefieres ejecutar la aplicación localmente:
+
+### Prerrequisitos
+
+- **Java 21** instalado
+- **MongoDB** ejecutándose en `localhost:27017`
+- **Gradle** (incluido en el proyecto)
+
+### Iniciar MongoDB Localmente
+
+```bash
+# Con Docker (solo MongoDB)
+docker run -d -p 27017:27017 --name mongodb mongo:7.0
+
+# O instalar MongoDB localmente desde mongodb.com
+```
+
+### Ejecutar la Aplicación
+
+```bash
+# Con Gradle
+./gradlew bootRun
+
+# O desde tu IDE favorito
+# Ejecutar la clase: co.com.nequi.franquicias.MainApplication
+```
+
+---
+
+## 🧪 Ejemplos de Uso
+
+### Crear una Franquicia
+
+```bash
+curl -X POST http://localhost:8080/api/franchises \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Nequi"}'
+```
+
+**Respuesta:**
+```json
+{
+  "id": "abc123...",
+  "name": "Nequi",
+  "branches": []
+}
+```
+
+### Agregar una Sucursal
+
+```bash
+curl -X POST http://localhost:8080/api/franchises/abc123/branches \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Sucursal Bogotá Centro"}'
+```
+
+### Agregar un Producto
+
+```bash
+curl -X POST http://localhost:8080/api/franchises/abc123/branches/def456/products \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Smartphone", "stock": 50}'
+```
+
+### Actualizar Stock
+
+```bash
+curl -X PATCH http://localhost:8080/api/franchises/abc123/branches/def456/products/xyz789/stock \
+  -H "Content-Type: application/json" \
+  -d '{"stock": 75}'
+```
+
+### Consultar Productos con Mayor Stock
+
+```bash
+curl http://localhost:8080/api/franchises/abc123/highest-stock-products
+```
+
+**Respuesta:**
+```json
+[
+  {
+    "productId": "xyz789",
+    "productName": "Smartphone",
+    "stock": 75,
+    "branchId": "def456",
+    "branchName": "Sucursal Bogotá Centro"
+  }
+]
+```
+
+### Usar con Postman
+
+Importa la colección incluida: `FranquiciasAPI.postman_collection.json`
+
+---
+
+## 🛠️ Comandos Útiles
+
+### Docker
+
+```bash
+# Iniciar servicios
+docker-compose up -d
+
+# Ver logs
+docker-compose logs -f
+
+# Reiniciar API (tras cambios de código)
+docker-compose restart franquicias-api
+
+# Reconstruir imagen
+docker-compose build --no-cache franquicias-api
+docker-compose up -d franquicias-api
+
+# Ver estado
+docker-compose ps
+
+# Detener todo
+docker-compose down
+```
+
+### Gradle
+
+```bash
+# Compilar
+./gradlew clean build
+
+# Ejecutar tests
+./gradlew test
+
+# Ejecutar aplicación
+./gradlew bootRun
+
+# Ver dependencias
+./gradlew dependencies
+```
+
+---
+
+## 📐 Estructura del Proyecto
+
+```
+API - Franquicias/
+├── applications/
+│   └── app-service/              # Configuración y arranque
+│       ├── src/main/
+│       │   ├── java/
+│       │   │   └── co/com/nequi/franquicias/
+│       │   │       ├── MainApplication.java
+│       │   │       └── config/
+│       │   │           └── UseCasesConfig.java
+│       │   └── resources/
+│       │       ├── application.yaml
+│       │       └── application-docker.yaml
+│       └── build.gradle
+│
+├── domain/
+│   ├── model/                     # Entidades y Puertos
+│   │   └── src/main/java/
+│   │       └── co/com/nequi/franquicias/model/
+│   │           ├── franchise/
+│   │           │   ├── Franchise.java
+│   │           │   └── gateways/FranchiseRepository.java
+│   │           ├── branch/
+│   │           │   ├── Branch.java
+│   │           │   └── gateways/BranchRepository.java
+│   │           └── product/
+│   │               ├── Product.java
+│   │               └── gateways/ProductRepository.java
+│   │
+│   └── usecase/                   # Lógica de Negocio
+│       └── src/main/java/
+│           └── co/com/nequi/franquicias/usecase/
+│               ├── createfranchise/
+│               ├── addbranchtofranchise/
+│               ├── addproducttobranch/
+│               ├── removeproductfrombranch/
+│               ├── updateproductstock/
+│               ├── gethigheststockproducts/
+│               └── ...
+│
+├── infrastructure/
+│   ├── entry-points/
+│   │   └── reactive-web/          # API REST
+│   │       └── src/main/java/
+│   │           └── co/com/nequi/franquicias/api/
+│   │               ├── Handler.java
+│   │               ├── RouterRest.java
+│   │               └── dto/
+│   │
+│   └── driven-adapters/
+│       └── mongo-repository/      # Persistencia MongoDB
+│           └── src/main/java/
+│               └── co/com/nequi/franquicias/mongo/
+│                   ├── MongoRepositoryAdapter.java
+│                   ├── MongoDBRepository.java
+│                   ├── data/
+│                   └── mapper/
+│
+├── deployment/
+│   └── Dockerfile                 # Multi-stage build
+│
+├── docker-compose.yml             # Orquestación de servicios
+├── .dockerignore
+├── build.gradle
+├── settings.gradle
+└── README.md
+```
+
+---
+
+## 🧬 Scaffold de Bancolombia
+
+Este proyecto fue generado utilizando el **Scaffold de Bancolombia**, una herramienta CLI que automatiza la creación de proyectos siguiendo Clean Architecture.
+
+### ¿Qué es el Scaffold de Bancolombia?
+
+Es un plugin de Gradle desarrollado por Bancolombia que permite generar la estructura base de proyectos con Clean Architecture de manera rápida y estandarizada. Facilita:
+
+- ✅ Generación automática de la estructura de carpetas
+- ✅ Configuración de módulos Gradle
+- ✅ Creación de casos de uso, entidades y adaptadores
+- ✅ Integración con diferentes tecnologías (WebFlux, MongoDB, etc.)
+- ✅ Cumplimiento de mejores prácticas
+
+### Comandos Utilizados
+
+```bash
+# Generar proyecto base
+gradle cleanArchitecture
+
+# Generar modelo de dominio
+gradle generateModel --name Franchise
+gradle generateModel --name Branch
+gradle generateModel --name Product
+
+# Generar casos de uso
+gradle generateUseCase --name CreateFranchise
+gradle generateUseCase --name AddBranchToFranchise
+# ... etc
+
+# Generar adaptadores
+gradle generateDrivenAdapter --type reactive-mongodb
+gradle generateEntryPoint --type reactive-web
+```
+
+### Recursos
+
+- [Documentación Scaffold Bancolombia](https://github.com/bancolombia/scaffold-clean-architecture)
+- [Artículo Clean Architecture - Bancolombia](https://medium.com/bancolombia-tech/clean-architecture-aislando-los-detalles-4f9530f35d7a)
+
+---
+
+## ✨ Características Destacadas
+
+### Programación Reactiva
+
+- **100% no bloqueante**: Todas las operaciones usan `Mono` y `Flux` de Project Reactor
+- **Alta concurrencia**: Manejo eficiente de múltiples peticiones simultáneas
+- **Escalabilidad**: Optimizado para alto rendimiento
+
+### Clean Architecture
+
+- **Independencia de frameworks**: La lógica de negocio no depende de Spring
+- **Testeable**: Fácil de testear cada capa de forma aislada
+- **Mantenible**: Código organizado y fácil de entender
+- **Flexible**: Fácil cambiar implementaciones (ej: cambiar MongoDB por DynamoDB)
+
+### Seguridad y Buenas Prácticas
+
+- ✅ Usuario no-root en contenedor Docker
+- ✅ Health checks configurados
+- ✅ Actuator para monitoreo
+- ✅ CORS configurado
+- ✅ Manejo de errores reactivo
+- ✅ Validación de datos
+
+---
+
+## 📊 Monitoreo y Observabilidad
+
+### Actuator Endpoints
+
+```bash
+# Health check
+curl http://localhost:8080/actuator/health
+
+# Métricas Prometheus
+curl http://localhost:8080/actuator/prometheus
+
+# Información de la aplicación
+curl http://localhost:8080/actuator/info
+```
+
+### Logs
+
+```bash
+# Ver logs de la API
+docker-compose logs -f franquicias-api
+
+# Ver logs de MongoDB
+docker-compose logs -f mongodb
+```
+
+---
+
+## 🧪 Testing
+
+```bash
+# Ejecutar todos los tests
+./gradlew test
+
+# Ejecutar tests con coverage
+./gradlew test jacocoTestReport
+
+# Ver reporte de coverage
+open build/reports/jacoco/test/html/index.html
+```
+
+---
+
+## 🚀 Despliegue en Producción
+
+### Recomendaciones
+
+1. **Base de Datos**: Usar MongoDB Atlas o servicio gestionado
+2. **Variables de Entorno**: Configurar secrets de forma segura
+3. **Recursos**: Ajustar límites de CPU y memoria en `docker-compose.yml`
+4. **Monitoring**: Integrar con Prometheus + Grafana
+5. **Logging**: Usar ELK Stack o servicio cloud
+6. **Seguridad**: Implementar autenticación y autorización (JWT, OAuth2)
+
+### Configuración para Producción
+
+Modificar `application.yaml`:
+
+```yaml
+spring:
+  data:
+    mongodb:
+      uri: ${MONGODB_URI}  # Desde variable de entorno
+```
+
+---
+
+## 📚 Documentación Adicional
+
+- **Colección Postman**: `FranquiciasAPI.postman_collection.json`
+- **Arquitectura Clean**: [Medium - Bancolombia](https://medium.com/bancolombia-tech/clean-architecture-aislando-los-detalles-4f9530f35d7a)
+- **Spring WebFlux**: [Documentación Oficial](https://docs.spring.io/spring-framework/docs/current/reference/html/web-reactive.html)
+- **Project Reactor**: [Reactor Docs](https://projectreactor.io/docs)
+
+---
+
+## 👨‍💻 Autor
+
+**Desarrollador Backend** apasionado por arquitecturas limpias, programación reactiva y excelencia técnica.
+
+Proyecto desarrollado como parte del proceso de aplicación a **Nequi** 🚀
+
+---
+
+## 📄 Licencia
+
+Este proyecto fue desarrollado para propósitos de evaluación técnica.
+
+---
+
+## 🙏 Agradecimientos
+
+- **Nequi** por la oportunidad de demostrar mis habilidades técnicas
+- **Bancolombia** por el excelente Scaffold de Clean Architecture
+- La comunidad de **Spring** y **Reactor** por crear tecnologías increíbles
+
+---
+
+**Desarrollado con ❤️ y pasión por la ingeniería de software de calidad**
+
