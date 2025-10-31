@@ -758,7 +758,6 @@ Este proyecto incluye **TODOS** los puntos extra solicitados:
 ### ✅ 1. Empaquetado con Docker
 - **Docker Compose** completo para desarrollo local
 - **Multi-stage Dockerfile** optimizado para producción
-- **Docker Compose AWS** para despliegue en la nube
 - Health checks y monitoreo integrado
 
 ### ✅ 2. Programación Funcional y Reactiva
@@ -804,25 +803,29 @@ Este proyecto incluye **TODOS** los puntos extra solicitados:
 
 ### 📁 Estructura de Archivos para Despliegue
 
+```
+API - Franquicias/
 ├── terraform/                          # Infraestructura como Código
 │   ├── main.tf                        # Terraform para Azure + MongoDB Atlas
 │   ├── terraform-azure.tfvars.example # Ejemplo de variables
 │   ├── .gitignore                     # Ignorar secrets
 │   └── README.md                      # Guía de Terraform
-│   ├── .gitignore              # Ignorar secrets
-│   └── README.md               # Guía de Terraform
+│
+├── deployment/
 │   ├── Dockerfile                     # Multi-stage build optimizado
 │   ├── deploy-azure.sh               # Build & push a Azure ACR
 │   ├── deploy-azure-aci.sh           # Azure Container Instances
 │   └── deploy-azure-container-apps.sh # Azure Container Apps (Recomendado)
-│   ├── deploy-aws.sh          # Script de despliegue AWS
+│
 ├── AZURE-DEPLOYMENT.md                # Guía completa de despliegue en Azure
 ├── QUICKSTART-AZURE.md               # Guía rápida (30-40 min)
 └── docker-compose.yml                # Para desarrollo local
+```
+
 ### 🚀 Despliegue Completo en Azure (Lo que Hicimos)
 
 El proyecto está completamente desplegado en **Microsoft Azure** con la siguiente infraestructura:
-└── docker-compose.aws.yml     # Para producción AWS
+
 **Recursos Creados:**
 - ✅ **MongoDB Atlas M0** (GRATIS) en región Azure
 - ✅ **Azure Container Registry**: `acrfranquiciasnequidev.azurecr.io`
@@ -832,27 +835,24 @@ El proyecto está completamente desplegado en **Microsoft Azure** con la siguien
 - ✅ **Costo**: ~$20-30/mes
 
 **Comando de Despliegue (Resumen):**
-```
+```bash
 # 1. Provisionar infraestructura con Terraform
-### 🚀 Despliegue Rápido en AWS
+cd terraform
 terraform apply -var-file="terraform-azure.tfvars"
-# 1. Provisionar MongoDB Atlas con Terraform
+
 # 2. Compilar y subir a Azure Container Registry
+cd ..
 gradle clean build -x test
 az acr login --name acrfranquiciasnequidev
-docker build -t acrfranquiciasnequidev.azurecr.io/franquicias-api:latest .
+docker build -t acrfranquiciasnequidev.azurecr.io/franquicias-api:latest -f deployment/Dockerfile .
 docker push acrfranquiciasnequidev.azurecr.io/franquicias-api:latest
 
 # 3. Desplegar en Azure Container Apps
 az containerapp env create --name franquicias-nequi-env --resource-group rg-franquicias-nequi-dev --location eastus
-az containerapp create --name franquicias-nequi-api ...
+az containerapp create --name franquicias-nequi-api ... # Ver guía completa
 
 # 4. Verificar deployment
 curl https://franquicias-nequi-api.blueplant-b4ada0ac.eastus.azurecontainerapps.io/actuator/health
-./deploy-aws.sh
-
-# 3. Verificar deployment
-curl http://<ALB-DNS>/actuator/health
 ```
 
 ### 🚀 Despliegue Rápido en Azure
